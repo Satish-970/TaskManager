@@ -1,6 +1,7 @@
 package com.task.TeamManager.Dto;
 
-import java.util.Date;
+import java.time.LocalDate;
+
 
 public class TaskDto {
     private long id;
@@ -10,6 +11,6 @@ public class TaskDto {
     private String priority;
     private long projectId;
     private long assignedToId;
-    private Date createdAt;
+    private LocalDate createdAt;
 
 }

@@ -47,5 +47,15 @@ public class TaskController {
         taskService.DeleteTask(id);
     }
 
+    @PutMapping("{id}")
+    public Tasks updateTask(@PathVariable Long id, @RequestBody Tasks task) {
+    if(task.getId().IsFound()) {
+            task.setId(id);
+        } else {
+            throw new IllegalArgumentException("Task ID mismatch");
+        }
+        return taskService.SaveTask(task);
+
+    }
 
 }
