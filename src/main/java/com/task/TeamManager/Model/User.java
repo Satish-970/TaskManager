@@ -39,12 +39,16 @@ public class User {
 
     @CreationTimestamp
     private LocalDateTime createdAt;
+    private Set<Roles> roles;
 
     public String getname() {
         return  name;
     }
 
     public void setRoles(Set<Roles> singleton) {
-
+        if (singleton == null || singleton.isEmpty()) {
+            throw new IllegalArgumentException("Roles cannot be null or empty");
+        }
+        this.roles = singleton;
     }
 }

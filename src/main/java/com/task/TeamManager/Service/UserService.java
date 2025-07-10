@@ -4,23 +4,23 @@ import com.task.TeamManager.Model.Roles;
 import com.task.TeamManager.Model.User;
 import com.task.TeamManager.Repository.RoleRepository;
 import com.task.TeamManager.Repository.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
 
 import java.util.*;
 
+
+@Service
 public class UserService {
 
-    private final UserRepository userRepository;
-    private final RoleRepository roleRepository;
-    private final PasswordEncoder passwordEncoder;
+    @Autowired
+    private  UserRepository userRepository;
+    @Autowired
+    private  RoleRepository roleRepository;
+    @Autowired
+    private  PasswordEncoder passwordEncoder;
 
-    public UserService(UserRepository userRepository,
-                       RoleRepository roleRepository,
-                       PasswordEncoder passwordEncoder) {
-        this.userRepository = userRepository;
-        this.roleRepository = roleRepository;
-        this.passwordEncoder = passwordEncoder;
-    }
 
     // Register user with dynamic roles
     public User registerUser(User user, Set<String> strRoles) {
