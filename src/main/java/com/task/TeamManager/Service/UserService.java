@@ -10,60 +10,64 @@ import org.springframework.stereotype.Service;
 
 import java.util.*;
 
-
 @Service
 public class UserService {
 
     @Autowired
-    private  UserRepository userRepository;
-    @Autowired
-    private  RoleRepository roleRepository;
-    @Autowired
-    private  PasswordEncoder passwordEncoder;
+    private UserRepository userRepository;
 
+    @Autowired
+    private RoleRepository roleRepository;
 
-    // Register user with dynamic roles
-    public User registerUser(User user, Set<String> strRoles) {
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+    // Register user with roles
+    public User registerUser(User user, Set<String> roleNames) {
         if (userRepository.existsByUsername(user.getname())) {
-            throw new IllegalArgumentException("Error: Username is already taken!");
+            throw new IllegalArgumentException("Username already exists: " + user.getname());
         }
 
         if (userRepository.existsByEmail(user.getEmail())) {
-            throw new IllegalArgumentException("Error: Email is already in use!");
+            throw new IllegalArgumentException("Email already exists: " + user.getEmail());
         }
 
-        // Encode password
+        // Encrypt password
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-        user.setName(user.getname());
-        user.setEmail(user.getEmail());
 
+        Set<Roles> roles = resolveRoles(roleNames);
+        user.setRoles(roles);
+
+        return userRepository.save(user);
+    }
+
+    private Set<Roles> resolveRoles(Set<String> roleNames) {
         Set<Roles> roles = new HashSet<>();
 
-        if (strRoles == null || strRoles.isEmpty()) {
-            Roles teamMemberRole = roleRepository.findbyname(Roles.ERole.ROLE_TEAM_MEMBER)
-                    .orElseThrow(() -> new RuntimeException("Error: Role 'TEAM_MEMBER' not found."));
-            roles.add(teamMemberRole);
+        if (roleNames == null || roleNames.isEmpty()) {
+            Roles defaultRole = roleRepository.findbyname(Roles.ERole.ROLE_TEAM_MEMBER)
+                    .orElseThrow(() -> new RuntimeException("Default role TEAM_MEMBER not found."));
+            roles.add(defaultRole);
         } else {
-            for (String role : strRoles) {
-                switch (role.toLowerCase()) {
+            for (String roleName : roleNames) {
+                Roles.ERole eRole;
+                switch (roleName.toLowerCase()) {
                     case "manager":
-                        Roles managerRole = roleRepository.findbyname(Roles.ERole.ROLE_PROJECT_MANAGER)
-                                .orElseThrow(() -> new RuntimeException("Error: Role 'PROJECT_MANAGER' not found."));
-                        roles.add(managerRole);
+                        eRole = Roles.ERole.ROLE_PROJECT_MANAGER;
                         break;
                     case "member":
-                        Roles memberRole = roleRepository.findbyname(Roles.ERole.ROLE_TEAM_MEMBER)
-                                .orElseThrow(() -> new RuntimeException("Error: Role 'TEAM_MEMBER' not found."));
-                        roles.add(memberRole);
+                        eRole = Roles.ERole.ROLE_TEAM_MEMBER;
                         break;
                     default:
-                        throw new RuntimeException("Error: Role '" + role + "' is not supported.");
+                        throw new IllegalArgumentException("Unsupported role: " + roleName);
                 }
+
+                Roles role = roleRepository.findbyname(eRole)
+                        .orElseThrow(() -> new RuntimeException("Role not found: " + roleName));
+                roles.add(role);
             }
         }
-
-        user.setRoles(roles);
-        return userRepository.save(user);
+        return roles;
     }
 
     public Optional<User> findbyUserId(Long id) {
@@ -78,39 +82,20 @@ public class UserService {
         return userRepository.findAll();
     }
 
-    public void deleteUser(long id) throws Exception {
+    public void deleteUser(long id) {
         if (!userRepository.existsById(id)) {
             throw new IllegalArgumentException("User not found with ID: " + id);
         }
         userRepository.deleteById(id);
     }
 
-    // Update user roles using userId and newRoles
     public User updateUserRoles(Long userId, Set<String> newRoles) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("User not found with ID: " + userId));
 
-        Set<Roles> roles = new HashSet<>();
+        Set<Roles> resolvedRoles = resolveRoles(newRoles);
+        user.setRoles(resolvedRoles);
 
-        for (String roleName : newRoles) {
-            Roles.ERole eRole;
-            switch (roleName.toLowerCase()) {
-                case "manager":
-                    eRole = Roles.ERole.ROLE_PROJECT_MANAGER;
-                    break;
-                case "member":
-                    eRole = Roles.ERole.ROLE_TEAM_MEMBER;
-                    break;
-                default:
-                    throw new IllegalArgumentException("Role '" + roleName + "' is not supported.");
-            }
-
-            Roles role = roleRepository.findbyname(eRole)
-                    .orElseThrow(() -> new RuntimeException("Error: Role '" + roleName + "' not found."));
-            roles.add(role);
-        }
-
-        user.setRoles(roles);
         return userRepository.save(user);
     }
 }

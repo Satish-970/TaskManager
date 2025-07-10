@@ -22,11 +22,10 @@ public class TaskService {
         if (taskname.isEmpty()) {
             throw new IllegalArgumentException("Task name cannot be empty");
         }
-        return  taskname;
-
+        return taskname;
     }
 
-    public  String DuedateValidate(Date duedate) {
+    public String DuedateValidate(Date duedate) {
         if (duedate == null) {
             throw new IllegalArgumentException("Due date cannot be null");
         }
@@ -53,8 +52,9 @@ public class TaskService {
         if (task.getDueDate() == null) {
             throw new IllegalArgumentException("Due date cannot be null");
         }
-        return (Tasks) taskRepository.save(task);
+        return taskRepository.save(task);
     }
+
     public void DeleteTask(Long taskId) {
         if (taskId == null || taskId <= 0) {
             throw new IllegalArgumentException("Invalid task ID");
@@ -64,7 +64,6 @@ public class TaskService {
         }
         taskRepository.deleteById(taskId);
     }
-
 
     public Page<Tasks> getAllTasks(Pageable pageable) {
         if (pageable == null) {
@@ -108,7 +107,7 @@ public class TaskService {
         } catch (IllegalArgumentException e) {
             throw new IllegalArgumentException("Invalid task status: " + status);
         }
-        return (Page<Tasks>) taskRepository.findByStatus(taskStatus);
+        return (Page<Tasks>) taskRepository.findByStatus(taskStatus, pageable);
     }
 
     public Page<Tasks> getTasksByPriority(String priority, Pageable pageable) {
@@ -124,7 +123,7 @@ public class TaskService {
         } catch (IllegalArgumentException e) {
             throw new IllegalArgumentException("Invalid task priority: " + priority);
         }
-        return (Page<Tasks>) taskRepository.findByPriority(taskPriority);
+        return (Page<Tasks>) taskRepository.findByPriority(taskPriority, pageable);
     }
 
     public void AssignedUserValidate(User assignedTo) {
@@ -134,7 +133,7 @@ public class TaskService {
         if (assignedTo.getId() <= 0) {
             throw new IllegalArgumentException("Invalid assigned user ID");
         }
-        if (!assignedTo.getRoles().contains("TEAM_MEMBER")) {
+        if (assignedTo.getRoles().stream().noneMatch(role -> role.getName().name().equals("ROLE_TEAM_MEMBER"))) {
             throw new IllegalArgumentException("Assigned user must have 'TEAM_MEMBER' role");
         }
     }
@@ -153,32 +152,11 @@ public class TaskService {
         if (priority == null) {
             throw new IllegalArgumentException("Task priority cannot be null");
         }
-        switch (priority) {
-            case LOW:
-            case MEDIUM:
-            case HIGH:
-            case URGENT:
-                break;
-            default:
-                throw new IllegalArgumentException("Invalid task priority: " + priority);
-        }
     }
 
     public void StatusValidate(Tasks.TaskStatus status) {
         if (status == null) {
-            throw new IllegalArgumentException("Task priority cannot be null");
-        }
-        switch (status) {
-            case TO_DO:
-
-            case IN_PROGRESS:
-
-            case COMPLETED:
-
-            case BLOCKED:
-                    break;
-            default:
-                throw new IllegalArgumentException("Invalid task priority: " + status);
+            throw new IllegalArgumentException("Task status cannot be null");
         }
     }
 }
