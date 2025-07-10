@@ -49,13 +49,46 @@ public class TaskController {
 
     @PutMapping("{id}")
     public Tasks updateTask(@PathVariable Long id, @RequestBody Tasks task) {
-    if(task.getId().IsFound()) {
-            task.setId(id);
+    if(task.getId()!=null) {
+             taskService.SaveTask(task);
         } else {
             throw new IllegalArgumentException("Task ID mismatch");
         }
-        return taskService.SaveTask(task);
+        task.setId(id);
+       task.getTitle().trim();
+          if(task.getTitle()!=null){
+              task.setTitle(taskService.isTaskValid(task.getTitle()));
+          }else{
+              throw new IllegalArgumentException("Task title cannot be empty");
+          }
+          if(task.getDueDate()!=null){
+              taskService.DuedateValidate(task.getDueDate());
+            }else{
+                throw new IllegalArgumentException("Due date cannot be null");
+          }
+          if(task.getAssignedTo()!=null){
+              taskService.AssignedUserValidate(task.getAssignedTo());
+            }else{
+                throw new IllegalArgumentException("Assigned user cannot be null");
+          }
+          if(task.getDescription()!=null){
+                task.setDescription(taskService.isDescriptionValid(task.getDescription()));
+          }else{
+                throw new IllegalArgumentException("Task description cannot be empty");
+          }
+          if(task.getPriority()!=null){
+              taskService.PriorityValidate(task.getPriority());
+            }else{
+                throw new IllegalArgumentException("Task priority cannot be null");
+          }
+          if(task.getStatus()!=null){
+              taskService.StatusValidate(task.getStatus());
 
+          }else{
+              throw new IllegalArgumentException("Task Status cannot be null");
+          }
+
+          return taskService.SaveTask(task);
     }
 
 }

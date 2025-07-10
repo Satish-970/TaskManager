@@ -126,4 +126,59 @@ public class TaskService {
         }
         return (Page<Tasks>) taskRepository.findByPriority(taskPriority);
     }
+
+    public void AssignedUserValidate(User assignedTo) {
+        if (assignedTo == null) {
+            throw new IllegalArgumentException("Assigned user cannot be null");
+        }
+        if (assignedTo.getId() <= 0) {
+            throw new IllegalArgumentException("Invalid assigned user ID");
+        }
+        if (!assignedTo.getRoles().contains("TEAM_MEMBER")) {
+            throw new IllegalArgumentException("Assigned user must have 'TEAM_MEMBER' role");
+        }
+    }
+
+    public String isDescriptionValid(String description) {
+        if (description == null || description.trim().isEmpty()) {
+            throw new IllegalArgumentException("Description cannot be null or empty");
+        }
+        if (description.length() > 500) {
+            throw new IllegalArgumentException("Description cannot exceed 500 characters");
+        }
+        return description.trim();
+    }
+
+    public void PriorityValidate(Tasks.TaskPriority priority) {
+        if (priority == null) {
+            throw new IllegalArgumentException("Task priority cannot be null");
+        }
+        switch (priority) {
+            case LOW:
+            case MEDIUM:
+            case HIGH:
+            case URGENT:
+                break;
+            default:
+                throw new IllegalArgumentException("Invalid task priority: " + priority);
+        }
+    }
+
+    public void StatusValidate(Tasks.TaskStatus status) {
+        if (status == null) {
+            throw new IllegalArgumentException("Task priority cannot be null");
+        }
+        switch (status) {
+            case TO_DO:
+
+            case IN_PROGRESS:
+
+            case COMPLETED:
+
+            case BLOCKED:
+                    break;
+            default:
+                throw new IllegalArgumentException("Invalid task priority: " + status);
+        }
+    }
 }
