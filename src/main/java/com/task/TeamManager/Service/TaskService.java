@@ -10,12 +10,17 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
+import java.util.List;
 
 @Service
 public class TaskService {
 
     @Autowired
     private TaskRepository taskRepository;
+
+    public  Tasks getById(long id) {
+        return taskRepository.getById(id);
+    }
 
     public String isTaskValid(String taskname) {
         taskname = taskname.trim();
@@ -158,5 +163,13 @@ public class TaskService {
         if (status == null) {
             throw new IllegalArgumentException("Task status cannot be null");
         }
+    }
+
+    public List<Tasks> getallTasks() {
+        return taskRepository.findAll();
+    }
+
+    public void UpdateTask(Tasks task) {
+        taskRepository.save(task);
     }
 }
