@@ -37,4 +37,8 @@ public class Projects {
 
     @CreationTimestamp
     private Date createdAt;
+
+    public Date getDueDate() {
+        return endDate;
+    }
 }

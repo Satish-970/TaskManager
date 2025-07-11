@@ -53,4 +53,7 @@ public class Tasks {
 
     @CreationTimestamp
     private Date createdAt;
+    public Long getId(){
+        return id;
+    }
 }

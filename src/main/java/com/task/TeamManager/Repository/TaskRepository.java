@@ -5,8 +5,8 @@ import com.task.TeamManager.Model.Tasks.TaskPriority;
 import com.task.TeamManager.Model.Tasks.TaskStatus;
 import com.task.TeamManager.Model.Projects;
 import com.task.TeamManager.Model.User;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -15,18 +15,15 @@ import java.util.List;
 public interface TaskRepository extends JpaRepository<Tasks, Long> {
 
     // Get tasks assigned to a specific user
-    List<Tasks> findByAssignedTo(User user);
+    List<Tasks> findByAssignedTo(User user, Pageable pageable);
 
     // Get tasks under a specific project
-    List<Tasks> findByProject(Projects project);
+    List<Tasks> findByProject(Projects project, Pageable pageable);
 
     // Get tasks by status
-    List<Tasks> findByStatus(TaskStatus status);
+    List<Tasks> findByStatus(TaskStatus status, Pageable pageable);
 
     // Get tasks by priority
-    List<Tasks> findByPriority(TaskPriority priority);
+    List<Tasks> findByPriority(TaskPriority priority, Pageable pageable);
 
-    // Custom query: Get all tasks with project and assigned user eagerly fetched
-    @Query("SELECT t FROM Tasks t JOIN FETCH t.project JOIN FETCH t.assignedTo")
-    List<Tasks> findAllWithProjectAndAssignee();
 }
