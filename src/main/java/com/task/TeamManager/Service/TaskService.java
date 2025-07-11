@@ -131,17 +131,7 @@ public class TaskService {
         return (Page<Tasks>) taskRepository.findByPriority(taskPriority, pageable);
     }
 
-    public void AssignedUserValidate(User assignedTo) {
-        if (assignedTo == null) {
-            throw new IllegalArgumentException("Assigned user cannot be null");
-        }
-        if (assignedTo.getId() <= 0) {
-            throw new IllegalArgumentException("Invalid assigned user ID");
-        }
-        if (assignedTo.getRoles().stream().noneMatch(role -> role.getName().name().equals("ROLE_TEAM_MEMBER"))) {
-            throw new IllegalArgumentException("Assigned user must have 'TEAM_MEMBER' role");
-        }
-    }
+
 
     public String isDescriptionValid(String description) {
         if (description == null || description.trim().isEmpty()) {

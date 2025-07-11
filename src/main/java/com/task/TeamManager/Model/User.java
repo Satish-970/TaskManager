@@ -47,10 +47,5 @@ public class User {
         return  name;
     }
 
-    public void setRoles(Set<Roles> singleton) {
-        if (singleton == null || singleton.isEmpty()) {
-            throw new IllegalArgumentException("Roles cannot be null or empty");
-        }
-        this.roles = singleton;
-    }
+
 }

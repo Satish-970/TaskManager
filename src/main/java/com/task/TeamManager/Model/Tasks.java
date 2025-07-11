@@ -14,6 +14,7 @@ import java.util.Date;
 @Setter
 @Getter
 @Component
+@Table(name = "Tasks")
 public class Tasks {
 
     @Id
