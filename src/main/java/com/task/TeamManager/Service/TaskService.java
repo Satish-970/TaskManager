@@ -10,12 +10,17 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
+import java.util.List;
 
 @Service
 public class TaskService {
 
     @Autowired
     private TaskRepository taskRepository;
+
+    public  Tasks getById(long id) {
+        return taskRepository.getById(id);
+    }
 
     public String isTaskValid(String taskname) {
         taskname = taskname.trim();
@@ -126,17 +131,7 @@ public class TaskService {
         return (Page<Tasks>) taskRepository.findByPriority(taskPriority, pageable);
     }
 
-    public void AssignedUserValidate(User assignedTo) {
-        if (assignedTo == null) {
-            throw new IllegalArgumentException("Assigned user cannot be null");
-        }
-        if (assignedTo.getId() <= 0) {
-            throw new IllegalArgumentException("Invalid assigned user ID");
-        }
-        if (assignedTo.getRoles().stream().noneMatch(role -> role.getName().name().equals("ROLE_TEAM_MEMBER"))) {
-            throw new IllegalArgumentException("Assigned user must have 'TEAM_MEMBER' role");
-        }
-    }
+
 
     public String isDescriptionValid(String description) {
         if (description == null || description.trim().isEmpty()) {
@@ -158,5 +153,13 @@ public class TaskService {
         if (status == null) {
             throw new IllegalArgumentException("Task status cannot be null");
         }
+    }
+
+    public List<Tasks> getallTasks() {
+        return taskRepository.findAll();
+    }
+
+    public void UpdateTask(Tasks task) {
+        taskRepository.save(task);
     }
 }

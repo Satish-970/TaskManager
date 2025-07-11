@@ -5,14 +5,16 @@ import jakarta.persistence.*;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.extern.apachecommons.CommonsLog;
 import org.hibernate.annotations.CreationTimestamp;
+import org.springframework.stereotype.Component;
 
 import java.util.Date;
 @Entity
 @Data
 @Setter
 @Getter
+@Component
+@Table(name = "projects")
 public class Projects {
 
     @Id

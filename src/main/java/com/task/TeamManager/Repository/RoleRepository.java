@@ -11,9 +11,7 @@ import java.util.Optional;
 
 @Repository
 public interface RoleRepository extends JpaRepository<Roles,Long> {
-    Optional<Roles> findbyname(Roles.ERole name);
-    @Query("SELECT FROM Project p JOIN FETCH p.projectManager")
-    List<Projects> findAllWithManagers();
+
 
 
 
