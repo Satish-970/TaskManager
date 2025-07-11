@@ -2,6 +2,8 @@ package com.task.TeamManager.Model;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.stereotype.Component;
 
 @Entity
 @Data
@@ -9,6 +11,7 @@ import lombok.*;
 @AllArgsConstructor
 @Setter
 @Getter
+@Component
 public class Roles {
 
     @Id
